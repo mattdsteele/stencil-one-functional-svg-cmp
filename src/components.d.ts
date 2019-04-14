@@ -5,25 +5,35 @@
  */
 
 
-import '@stencil/core';
-
-
+import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
+import { JSX } from '@stencil/core';
 
 
 export namespace Components {
-
   interface SvgSample {}
-  interface SvgSampleAttributes extends StencilHTMLAttributes {}
 }
 
-declare global {
-  interface StencilElementInterfaces {
+declare namespace LocalJSX {
+  interface SvgSample extends JSXBase.HTMLAttributes {}
+
+  interface ElementInterfaces {
     'SvgSample': Components.SvgSample;
   }
 
-  interface StencilIntrinsicElements {
-    'svg-sample': Components.SvgSampleAttributes;
+  interface IntrinsicElements {
+    'SvgSample': LocalJSX.SvgSample;
   }
+}
+export { LocalJSX as JSX };
+
+declare module "@stencil/core" {
+  export namespace JSX {
+    interface ElementInterfaces extends LocalJSX.ElementInterfaces {}
+    interface IntrinsicElements extends LocalJSX.IntrinsicElements {}
+  }
+}
+
+declare global {
 
 
   interface HTMLSvgSampleElement extends Components.SvgSample, HTMLStencilElement {}
@@ -31,7 +41,6 @@ declare global {
     prototype: HTMLSvgSampleElement;
     new (): HTMLSvgSampleElement;
   };
-
   interface HTMLElementTagNameMap {
     'svg-sample': HTMLSvgSampleElement
   }
@@ -39,14 +48,5 @@ declare global {
   interface ElementTagNameMap {
     'svg-sample': HTMLSvgSampleElement;
   }
-
-
-  export namespace JSX {
-    export interface Element {}
-    export interface IntrinsicElements extends StencilIntrinsicElements {
-      [tagName: string]: any;
-    }
-  }
-  export interface HTMLAttributes extends StencilHTMLAttributes {}
-
 }
+
